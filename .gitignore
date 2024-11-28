@@ -5,3 +5,6 @@ build/*
 objs/*
 
 *.key
+
+.cache/*
+compile_commands.json
