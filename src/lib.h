@@ -7,6 +7,7 @@
 namespace chronocipher {
 
 std::array<uint8_t,256> generateKey(); 
+std::array<unsigned char,256> generateKey(const std::string& passphrase);
 
 void blockify(const std::string& inputText, std::vector<char>& vBuffer);
 

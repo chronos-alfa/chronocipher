@@ -8,6 +8,13 @@
 #include <string>
 #include "../src/lib.h"
 
+bool keysAreSame(const std::array<uint8_t, 256>& keyA, const std::array<uint8_t, 256>& keyB) {
+  for (size_t i{0}; i < 256; ++i) {
+    if (keyA[i] != keyB[i]) return false;
+  }
+  return true;
+}
+
 void testKeyGen() {
   auto myKey = chronocipher::generateKey();
 
@@ -26,6 +33,18 @@ void testKeyGen() {
   }
   testKeyf.close();
   return;
+}
+
+void testKeygenPassphrase() {
+  auto key1 = chronocipher::generateKey("John Doe");
+  auto key2 = chronocipher::generateKey("John Doe");
+  auto key3 = chronocipher::generateKey("Jane Doe");
+  auto key4 = chronocipher::generateKey("Jane Doe");
+
+  assert(keysAreSame(key1, key2) && "First two keys do not match");
+  assert(keysAreSame(key3, key4) && "Second set of keys doesn't match");
+
+  assert(!keysAreSame(key1, key3) && "These keys shouldn't match, but do");
 }
 
 void testBlockify() {
@@ -126,9 +145,12 @@ int main() {
 
   testMutateCipher();
   testKeyGen();
+  testKeygenPassphrase();
   testBlockify();
+  testRound1();
   testRound2();
   testRound3();
+  testFullEncryption();
 
   std::cout << "All tests successful\n";
 }
