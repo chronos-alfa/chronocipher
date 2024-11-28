@@ -113,8 +113,9 @@ void bicryptRound2(std::array<char, 256>& block, const std::array<uint8_t, 256>&
   for (size_t i{0}; i < 256; ++i) {
     block[i]^=chronokey[i];
   }
-}
 
+  return;
+}
 
 void encryptRound3(std::array<char, 256>& block, const std::array<uint8_t, 256>& chronokey) {
   std::array<char, 256> originalBlock{block};
@@ -122,6 +123,8 @@ void encryptRound3(std::array<char, 256>& block, const std::array<uint8_t, 256>&
   for(size_t i{0}; i < 256; ++i) {
     block[i] = originalBlock[chronokey[i]];
   }
+
+  return;
 }
 
 void decryptRound3(std::array<char, 256>& block, const std::array<uint8_t, 256>& chronokey) {
@@ -130,5 +133,32 @@ void decryptRound3(std::array<char, 256>& block, const std::array<uint8_t, 256>&
   for (size_t i{0}; i < 256; ++i) {
     block[chronokey[i]] = cipheredBlock[i];
   }
+
+  return;
+}
+
+void fullEncrypt(std::array<char, 256>& block, std::array<uint8_t, 256> chronokey) {
+  encrypt_round1(block);
+  mutateCipher(chronokey);
+  bicryptRound2(block, chronokey);
+  mutateCipher(chronokey);
+  encryptRound3(block, chronokey);
+  mutateCipher(chronokey);
+
+  return;
+}
+
+void fullDecrypt(std::array<char, 256>&block, std::array<uint8_t, 256> chronokey) {
+  mutateCipher(chronokey);
+  std::array<uint8_t, 256> keyR2{chronokey};
+  mutateCipher(chronokey);
+  std::array<uint8_t, 256> keyR3{chronokey};
+  mutateCipher(chronokey); // Key is now ready for another block
+  
+  decryptRound3(block, keyR3);
+  bicryptRound2(block, keyR2);
+  decrypt_round1(block);
+
+  return;
 }
 }

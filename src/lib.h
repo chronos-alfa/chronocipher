@@ -17,4 +17,6 @@ void decrypt_round1(std::array<char, 256>& block);
 void bicryptRound2(std::array<char, 256>& block, const std::array<uint8_t, 256>& chronokey);
 void encryptRound3(std::array<char, 256>& block, const std::array<uint8_t, 256>& chronokey);
 void decryptRound3(std::array<char, 256>& block, const std::array<uint8_t, 256>& chronokey);
+void fullEncrypt(std::array<char, 256>& block, std::array<uint8_t, 256> chronokey);
+void fullDecrypt(std::array<char, 256>& block, std::array<uint8_t, 256> chronokey);
 }

@@ -106,6 +106,21 @@ void testRound3() {
   return;
 }
 
+void testFullEncryption() {
+  std::array<uint8_t, 256> encryptionKey = chronocipher::generateKey();
+  std::array<uint8_t, 256> decryptionKey{encryptionKey};
+  std::array<char, 256> myText{'h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd'};
+  std::array<char, 256> cipherText{myText};
+
+  chronocipher::fullEncrypt(cipherText, encryptionKey);
+  assert((myText[1]!=cipherText[1]) && "Couldn't go through the full encryption");
+
+  chronocipher::fullDecrypt(cipherText, decryptionKey);
+  for (size_t i{0}; i < 256; ++i) {
+    assert(myText[i] == cipherText[i] && "Couldn't go through the full decryption");
+  }
+}
+
 int main() {
   std::cout << "Test runner: \n";
 
