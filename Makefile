@@ -22,6 +22,6 @@ clean:
 	rm test/test.o
 	rm test/test.out
 
-build: src/lib.cpp src/chronocipher.cpp
+build: src/lib.cpp src/chronocipher.cpp src/cliTools.cpp
 	mkdir -p build
-	$(CC) src/lib.cpp src/chronocipher.cpp -o build/chronocipher $(BUILD_FLAGS)
+	$(CC) src/lib.cpp src/chronocipher.cpp src/cliTools.cpp -o build/chronocipher $(BUILD_FLAGS)
