@@ -64,13 +64,13 @@ void testRound1() {
   std::array<char, 256> myText{'h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd'};
   std::array<char, 256> cipheredText{myText};
 
-  chronocipher::encrypt_round1(cipheredText);
+  chronocipher::encryptRound1(cipheredText);
 
   for (size_t i{0}; i < 11; ++i) {
     assert(myText[i] != cipheredText[i] && "Round 1 encryption doesn't work");
   }
 
-  chronocipher::decrypt_round1(cipheredText);
+  chronocipher::decryptRound1(cipheredText);
 
   for (size_t i{0}; i < 256; ++i) {
     assert(myText[i] == cipheredText[i] && "Round 1 decryption doesn't work");

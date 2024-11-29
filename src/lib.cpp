@@ -72,7 +72,7 @@ void blockify(const std::string& inputText, std::vector<char>& vBuffer) {
   return;
 }
 
-void encrypt_round1(std::array<char, 256>& block) {
+void encryptRound1(std::array<char, 256>& block) {
   const std::array<char, 256> originalBlock{block};
 
   for (size_t i{0}; i<128; ++i) {
@@ -98,7 +98,7 @@ void encrypt_round1(std::array<char, 256>& block) {
   return;
 }
 
-void decrypt_round1(std::array<char, 256>& block) {
+void decryptRound1(std::array<char, 256>& block) {
   const std::array<char, 256> originalBlock{block};
 
   for (size_t i{0}; i<128; ++i) {
@@ -153,7 +153,7 @@ void decryptRound3(std::array<char, 256>& block, const std::array<uint8_t, 256>&
 }
 
 void fullEncrypt(std::array<char, 256>& block, std::array<uint8_t, 256> chronokey) {
-  encrypt_round1(block);
+  encryptRound1(block);
   mutateCipher(chronokey);
   bicryptRound2(block, chronokey);
   mutateCipher(chronokey);
@@ -172,7 +172,7 @@ void fullDecrypt(std::array<char, 256>&block, std::array<uint8_t, 256> chronokey
   
   decryptRound3(block, keyR3);
   bicryptRound2(block, keyR2);
-  decrypt_round1(block);
+  decryptRound1(block);
 
   return;
 }
