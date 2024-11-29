@@ -1,6 +1,6 @@
 CC=g++
 FLAGS=-Wall -Wextra -Wpedantic -Werror -std=c++17 -g
-
+BUILD_FLAGS=-Wall -Wextra -Wpedantic -Werror -std=c++17 -DNDEBUG -s
 all: objs/lib.o test/test.o test/test.out testrunner
 
 objs/lib.o: src/lib.cpp
@@ -21,3 +21,7 @@ clean:
 	rm -rf objs/
 	rm test/test.o
 	rm test/test.out
+
+build: src/lib.cpp src/chronocipher.cpp
+	mkdir -p build
+	$(CC) src/lib.cpp src/chronocipher.cpp -o build/chronocipher $(BUILD_FLAGS)
