@@ -138,3 +138,35 @@ bool encryptFile(std::string_view filePath, const std::array<uint8_t, 256>& key)
 
   return true;
 }
+
+bool decryptFile(std::string_view filePath, const std::array<uint8_t, 256>& key) {
+  const std::string newFilePath{std::string(filePath)+"_dec"};
+
+  std::ifstream ifb(filePath.data(), std::ifstream::binary);
+  if (ifb.bad() || ifb.fail()) {
+    std::cerr << "Couldn't open the input file for decryption\n";
+    return false;
+  }
+
+  std::ofstream ofb(newFilePath, std::ios::binary);
+  if (ofb.bad() || ofb.fail()) {
+    ifb.close();
+    std::cerr << "Couldn't open the output file for decryption\n";
+  }
+
+  char buffer[256]{};
+  int readBytes{0};
+  std::array<char, 256> bufferArray{};
+  readBytes = ifb.readsome(buffer, 256);
+  while (readBytes > 0) {
+    std::memcpy(bufferArray.data(), buffer, 256);
+    chronocipher::fullDecrypt(bufferArray, key);
+    ofb.write(bufferArray.data(), 256);
+    readBytes = ifb.readsome(buffer, 256);
+  };
+
+  ifb.close();
+  ofb.close();
+
+  return true;
+}

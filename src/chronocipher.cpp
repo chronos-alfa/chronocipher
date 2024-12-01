@@ -11,7 +11,8 @@ enum ReturnCodes {
   tooManyParams,
   writeError,
   keyReadingError,
-  encryptionError
+  encryptionError,
+  decryptionError
 };
 
 void printUsage() {
@@ -81,6 +82,23 @@ int main(int argc, char** argv) {
       } else {
         std::cerr << "Couldn't encrypt the file.\n";
         return ReturnCodes::encryptionError;
+      }
+    }
+
+    if (params.decryptKeyFile.length() > 0) {
+      std::array<uint8_t, 256> decryptionKey;
+
+      if(!readKey(params.decryptKeyFile, decryptionKey)) {
+        std::cerr << "ERROR: Couldn't read the decryption key from the file\n";
+        return ReturnCodes::keyReadingError;
+      }
+
+      if(decryptFile(params.filepath, decryptionKey)) {
+        std::cout << "Successfully decrypted the file.\n";
+        return ReturnCodes::success;
+      } else {
+        std::cerr << "ERROR: Couldn't decrypt the file.\n";
+        return ReturnCodes::decryptionError;
       }
     }
 
