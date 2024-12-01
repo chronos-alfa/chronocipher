@@ -25,6 +25,7 @@ std::array<unsigned char,256> generateKey() {
 }
 
 std::array<unsigned char,256> generateKey(const std::string& passphrase) {
+  //FIXME: This reduces the complexity of the resulting key.
   std::hash<std::string> passHash{};
   auto mt = std::mt19937(passHash(passphrase));
   std::array<uint8_t,256> myKey{};
