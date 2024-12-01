@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <iostream>
 #include <string_view>
 #include "cliTools.h"
@@ -8,7 +9,9 @@ enum ReturnCodes {
   invalidParams,
   missingParamsValue,
   tooManyParams,
-  writeError
+  writeError,
+  keyReadingError,
+  encryptionError
 };
 
 void printUsage() {
@@ -61,6 +64,23 @@ int main(int argc, char** argv) {
       } else {
         std::cerr << "Couldn't write down the key to the file";
         return ReturnCodes::writeError;
+      }
+    }
+
+    if (params.encryptKeyFile.length() > 0) {
+      std::array<uint8_t, 256> encryptionKey{};
+
+      if(!readKey(params.encryptKeyFile, encryptionKey)) {
+        std::cerr << "ERROR: Couldn't read the encryption key from the file\n";
+        return ReturnCodes::keyReadingError;
+      }
+
+      if(encryptFile(params.filepath, encryptionKey)) {
+        std::cout << "Successfully encrypted the file.\n";
+        return ReturnCodes::success;
+      } else {
+        std::cerr << "Couldn't encrypt the file.\n";
+        return ReturnCodes::encryptionError;
       }
     }
 

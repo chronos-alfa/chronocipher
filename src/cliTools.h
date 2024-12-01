@@ -28,3 +28,5 @@ bool writeSymmetricKey(std::string_view filePath);
 bool writeSymmetricKey(std::string_view filePath, std::string_view passphrase);
 
 bool readKey(std::string_view filePath, std::array<uint8_t, 256>& outputKey);
+
+bool encryptFile(std::string_view filePath, const std::array<uint8_t, 256>& key);

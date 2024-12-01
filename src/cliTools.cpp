@@ -2,8 +2,10 @@
 #include "cliTools.h"
 #include <cstdint>
 #include <cstring>
+#include <ios>
 #include <string_view>
 #include <string.h>
+#include <string>
 #include <iostream>
 #include <fstream>
 
@@ -102,5 +104,37 @@ bool readKey(std::string_view filePath, std::array<uint8_t, 256>& outputKey) {
   char buffer[256]{};
   ifb.read(buffer, 256);
   std::memcpy(outputKey.data(), buffer, 256);
+  return true;
+}
+
+bool encryptFile(std::string_view filePath, const std::array<uint8_t, 256>& key) {
+  const std::string newFilePath{std::string(filePath)+"_enc"};
+
+  std::ifstream ifb(filePath.data(), std::ifstream::binary);
+  if (ifb.bad() || ifb.fail()) {
+    std::cerr << "Couldn't open the input file for encryption\n";
+    return false;
+  }
+
+  std::ofstream ofb(newFilePath, std::ios::binary);
+  if (ofb.bad() || ofb.fail()) {
+    ifb.close();
+    std::cerr << "Couldn't open the output file for encryption\n";
+  }
+
+  char buffer[256]{};
+  int readBytes{0};
+  std::array<char, 256> bufferArray{};
+  readBytes = ifb.readsome(buffer, 256);
+  while (readBytes > 0) {
+    std::memcpy(bufferArray.data(), buffer, 256);
+    chronocipher::fullEncrypt(bufferArray, key);
+    ofb.write(bufferArray.data(), 256);
+    readBytes = ifb.readsome(buffer, 256);
+  };
+
+  ifb.close();
+  ofb.close();
+
   return true;
 }
