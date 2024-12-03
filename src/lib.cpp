@@ -1,3 +1,4 @@
+#include <cctype>
 #include <cstddef>
 #include <functional>
 #include <numeric>
@@ -13,7 +14,12 @@
 namespace chronocipher {
 
 std::array<unsigned char,256> generateKey() {
-  auto mt = std::mt19937(std::random_device{}());
+  std::random_device rd{};
+  std::seed_seq ss{rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd(),
+  rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd(),
+  rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd(),
+  rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd()};
+  auto mt = std::mt19937_64(ss);
   std::array<uint8_t,256> myKey{};
   std::iota(myKey.begin(), myKey.end(), 0);
   assert(myKey[0] == 0 && "Beginning of the key is wrong");
@@ -25,9 +31,25 @@ std::array<unsigned char,256> generateKey() {
 }
 
 std::array<unsigned char,256> generateKey(const std::string& passphrase) {
-  //FIXME: This reduces the complexity of the resulting key.
+  //TODO: This reduces the complexity of the resulting key.
   std::hash<std::string> passHash{};
-  auto mt = std::mt19937(passHash(passphrase));
+  std::string passPhraseLower{passphrase};
+  for (char& c: passPhraseLower) {
+    c = tolower(c);
+  }
+
+  std::string passPhraseUpper{passphrase};
+  for (char& c : passPhraseUpper) {
+    c = toupper(c);
+  }
+
+  std::string passPhraseReversed{passphrase};
+  reverse(passPhraseReversed.begin(), passPhraseReversed.end());
+
+  std::seed_seq ss{passHash(passphrase), passHash(passPhraseLower),
+    passHash(passPhraseUpper), passHash(passPhraseReversed)};
+
+  auto mt = std::mt19937_64(ss);
   std::array<uint8_t,256> myKey{};
   std::iota(myKey.begin(), myKey.end(), 0);
   assert(myKey[0] == 0 && "Beginning of the key is wrong");
